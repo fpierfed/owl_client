@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 OWL Client Module
 
@@ -22,7 +21,7 @@ import socket
 
 
 __version__ = '1.0'
-
+__all__ = ['OWLD_PORT', 'ERRPR', 'parse_type', 'OwlClient']
 
 
 # Constants
@@ -31,6 +30,28 @@ ERROR = {255: 'All required arguments are None.',
          254: 'Not a valid OWL Job ID.',
          253: 'Invalid priority value.'}
 
+
+
+def parse_type(raw_value):
+    """
+    Parse a single command-line parameter and cast it to the appropriate Python
+    type.
+    """
+    if(raw_value.upper() == 'FALSE'):
+        return(False)
+    if(raw_value.upper() == 'TRUE'):
+        return(True)
+    if(raw_value == 'None'):
+        return(None)
+    try:
+        return(int(raw_value))
+    except (TypeError, ValueError):
+        pass
+    try:
+        return(float(raw_value))
+    except (TypeError, ValueError):
+        pass
+    return(raw_value)
 
 
 class OwlClient(object):

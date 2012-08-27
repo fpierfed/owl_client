@@ -22,7 +22,7 @@ Usage
 import optparse
 import socket
 
-from owl_client import OwlClient, OWLD_PORT
+from owl_client import OwlClient, OWLD_PORT, parse_type
 
 
 # We create names at the module level that pylint does not like.
@@ -68,8 +68,16 @@ if(not args):
 owl = OwlClient(ipaddr, options.port)
 method = args.pop(0)
 
-# Handle any None
-for i in range(len(args)):
-    if(args[i] == 'None'):
-        args[i] = None
-print(getattr(owl, method)(*args))
+# Handle any None and possible key=val pairs.
+kwds = {}
+argv = []
+while(args):
+    arg = args.pop(0)
+
+    if('=' in arg):
+        # We have a key=val pair, possibly.
+        [key, val] = arg.split('=', 1)
+        kwds[key.strip()] = parse_type(val.strip())
+    else:
+        argv.append(parse_type(arg))
+print(getattr(owl, method)(*argv, **kwds))
